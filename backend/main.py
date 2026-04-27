@@ -1,8 +1,9 @@
 from fastapi import FastAPI
-from logic import consensus_vote, detect_contradictions
-from prompts import tune_prompt
-from agents import ask_gpt, ask_gemini, ask_grok, ask_claude
 from concurrent.futures import ThreadPoolExecutor
+from agents import ask_gpt, ask_gemini, ask_grok, ask_claude
+from logic import consensus, contradictions, weighted_scores
+from prompts import tune_prompt
+from utils import estimate_cost, save_log
 
 app = FastAPI()
 
@@ -20,16 +21,18 @@ def run_parallel(prompt):
 @app.get("/ask")
 def ask(q: str):
 
-    tuned = tune_prompt(q)
-    prompt = f"{tuned}\n\nQuestion:\n{q}"
+    prompt = f"{tune_prompt(q)}\n\n{q}"
 
     answers = run_parallel(prompt)
 
-    consensus = consensus_vote(answers)
-    contradictions = detect_contradictions(answers)
-
-    return {
+    result = {
         "answers": answers,
-        "consensus": consensus,
-        "contradictions": contradictions
+        "consensus": consensus(answers),
+        "contradictions": contradictions(answers),
+        "scores": weighted_scores(answers),
+        "costs": {k: estimate_cost(v) for k,v in answers.items()}
     }
+
+    save_log(result)
+
+    return result

@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 
-function App() {
+export default function App() {
   const [q, setQ] = useState("");
   const [data, setData] = useState(null);
 
-  const ask = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/ask?q=${encodeURIComponent(q)}`);
-    const json = await res.json();
-    setData(json);
+  const run = async () => {
+    const r = await fetch(`http://127.0.0.1:8000/ask?q=${encodeURIComponent(q)}`);
+    setData(await r.json());
   };
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Multi-AI Agent</h2>
+      <h2>Multi-AI System</h2>
 
-      <input
-        style={{ width: "80%" }}
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
-
-      <button onClick={ask}>Run</button>
+      <input value={q} onChange={e=>setQ(e.target.value)} style={{width:"70%"}} />
+      <button onClick={run}>Run</button>
 
       {data && (
         <>
           <h3>Consensus</h3>
-          <pre>{JSON.stringify(data.consensus, null, 2)}</pre>
+          <pre>{data.consensus}</pre>
 
           <h3>Contradictions</h3>
           <pre>{data.contradictions}</pre>
 
+          <h3>Scores</h3>
+          <pre>{data.scores}</pre>
+
+          <h3>Costs</h3>
+          <pre>{JSON.stringify(data.costs,null,2)}</pre>
+
           <h3>Answers</h3>
-          {Object.entries(data.answers).map(([k, v]) => (
+          {Object.entries(data.answers).map(([k,v])=>(
             <div key={k}>
-              <h4>{k}</h4>
+              <b>{k}</b>
               <p>{v}</p>
             </div>
           ))}
@@ -42,5 +42,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

@@ -1,38 +1,31 @@
 import json
+from agents import ask_gpt
 
-def consensus_vote(answers):
-    """
-    Ask GPT to compare all answers and pick consensus
-    """
-    from agents import ask_gpt
+def consensus(answers):
+    return ask_gpt(f"""
+Answers:
+{json.dumps(answers)}
 
-    prompt = f"""
-Compare these answers:
+Find consensus and best answer.
+Return JSON with answer + confidence.
+""")
 
-{json.dumps(answers, indent=2)}
+def contradictions(answers):
+    return ask_gpt(f"""
+Answers:
+{json.dumps(answers)}
 
-Tasks:
-1. Identify agreements
-2. Identify disagreements
-3. Select best answer OR synthesize new one
+List contradictions clearly.
+""")
 
-Return JSON:
-{{
- "consensus": "...",
- "confidence": 0-1
-}}
-"""
-    return ask_gpt(prompt)
+def weighted_scores(answers):
+    return ask_gpt(f"""
+Answers:
+{json.dumps(answers)}
 
+Score each:
+- quality (0-10)
+- confidence (0-1)
 
-def detect_contradictions(answers):
-    from agents import ask_gpt
-
-    prompt = f"""
-Find contradictions between these answers:
-
-{json.dumps(answers, indent=2)}
-
-Return bullet list of conflicts.
-"""
-    return ask_gpt(prompt)
+Return JSON.
+""")

@@ -1,13 +1,11 @@
-BASE_PROMPT = "Answer clearly and accurately."
+BASE = "Answer clearly and accurately."
 
-def tune_prompt(question):
-    """
-    Simple adaptive prompt tuning
-    """
-    if "math" in question.lower():
-        return BASE_PROMPT + " Show step-by-step reasoning."
-    if "why" in question.lower():
-        return BASE_PROMPT + " Explain causality."
-    if "compare" in question.lower():
-        return BASE_PROMPT + " Provide structured comparison."
-    return BASE_PROMPT
+def tune_prompt(q):
+    ql = q.lower()
+    if "math" in ql:
+        return BASE + " Show step-by-step reasoning."
+    if "compare" in ql:
+        return BASE + " Use structured comparison."
+    if "why" in ql:
+        return BASE + " Explain causality."
+    return BASE

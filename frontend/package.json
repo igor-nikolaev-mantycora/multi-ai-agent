@@ -1,0 +1,11 @@
+{
+  "name": "multi-ai-ui",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "scripts": {
+    "start": "react-scripts start"
+  }
+}
