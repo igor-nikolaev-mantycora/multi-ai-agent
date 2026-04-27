@@ -1,8 +1,7 @@
 fastapi
 uvicorn
-openai
-anthropic
-google-generativeai
+google-genai
 python-dotenv
 requests
 tenacity
+huggingface_hub

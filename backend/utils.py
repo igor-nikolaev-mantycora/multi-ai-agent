@@ -1,11 +1,14 @@
-import os, json, datetime
+import datetime
+import json
+from pathlib import Path
 
 def estimate_cost(text, price_per_token=0.00001):
     tokens = len(text.split())
-    return tokens * price_per_token
+    return round(tokens * price_per_token, 6)
 
 def save_log(data):
-    os.makedirs("logs", exist_ok=True)
-    fname = f"logs/log_{datetime.datetime.now().timestamp()}.json"
-    with open(fname, "w") as f:
+    log_dir = Path(__file__).resolve().parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    fname = log_dir / f"log_{datetime.datetime.now().timestamp()}.json"
+    with open(fname, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)

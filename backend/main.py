@@ -1,8 +1,8 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from agents import ask_gpt, ask_gemini, ask_grok, ask_claude
+from agents import ask_gemini, ask_huggingface, ask_ollama
 from logic import consensus, contradictions, weighted_scores
 from prompts import tune_prompt
 from utils import estimate_cost, save_log
@@ -30,7 +30,7 @@ app.add_middleware(
 def root():
     return {
         "status": "backend running",
-        "message": "Multi-AI Agent API"
+        "message": "Multi-AI Agent API (free-tier mode)"
     }
 
 
@@ -45,12 +45,14 @@ def health():
 # ---------------------------------------------------------
 # Safe text extraction (prevents crashes)
 # ---------------------------------------------------------
-def safe_text(value):
+def normalize_provider_result(value):
     if isinstance(value, dict):
-        return value.get("error", str(value))
+        if "error" in value:
+            return {"answer": "", "error": str(value["error"])}
+        return {"answer": str(value), "error": None}
     if value is None:
-        return ""
-    return str(value)
+        return {"answer": "", "error": "Empty response"}
+    return {"answer": str(value), "error": None}
 
 
 # ---------------------------------------------------------
@@ -58,15 +60,14 @@ def safe_text(value):
 # ---------------------------------------------------------
 def run_parallel(prompt: str):
     tasks = {
-        "gpt": ask_gpt,
         "gemini": ask_gemini,
-        "grok": ask_grok,
-        "claude": ask_claude,
+        "huggingface": ask_huggingface,
+        "ollama": ask_ollama,
     }
 
     results = {}
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=len(tasks)) as executor:
         future_map = {
             executor.submit(fn, prompt): name
             for name, fn in tasks.items()
@@ -75,9 +76,9 @@ def run_parallel(prompt: str):
         for future in as_completed(future_map):
             name = future_map[future]
             try:
-                results[name] = safe_text(future.result())
+                results[name] = normalize_provider_result(future.result())
             except Exception as e:
-                results[name] = {"error": str(e)}
+                results[name] = {"answer": "", "error": str(e)}
 
     return results
 
@@ -94,10 +95,18 @@ async def ask(q: str):
     prompt = f"{tune_prompt(q)}\n\n{q}"
 
     # Run models
-    answers = run_parallel(prompt)
+    provider_results = run_parallel(prompt)
 
-    # Safe processing (prevents downstream crashes)
-    clean_answers = {k: safe_text(v) for k, v in answers.items()}
+    clean_answers = {
+        name: result["answer"]
+        for name, result in provider_results.items()
+        if result["answer"]
+    }
+    provider_errors = {
+        name: result["error"]
+        for name, result in provider_results.items()
+        if result["error"]
+    }
 
     try:
         cons = consensus(clean_answers)
@@ -116,7 +125,7 @@ async def ask(q: str):
 
     # Cost estimation (safe)
     costs = {
-        k: estimate_cost(v) if isinstance(v, str) else 0
+        k: estimate_cost(v)
         for k, v in clean_answers.items()
     }
 
@@ -124,6 +133,8 @@ async def ask(q: str):
         "query": q,
         "prompt_used": prompt,
         "answers": clean_answers,
+        "errors": provider_errors,
+        "providers": provider_results,
         "consensus": cons,
         "contradictions": contra,
         "scores": scores,
