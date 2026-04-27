@@ -1,0 +1,40 @@
+{
+  "query": "how to open door",
+  "prompt_used": "Answer clearly and accurately.\n\nhow to open door",
+  "answers": {
+    "gemini": "RetryError[<Future at 0x1d10026a570 state=finished raised ModuleNotFoundError>]",
+    "grok": "RetryError[<Future at 0x1d1001fbc50 state=finished raised KeyError>]",
+    "claude": "RetryError[<Future at 0x1d1002d2350 state=finished raised BadRequestError>]",
+    "gpt": "RetryError[<Future at 0x1d100438320 state=finished raised RateLimitError>]"
+  },
+  "consensus": {
+    "answer": "RetryError[<Future at 0x1d10026a570 state=finished raised ModuleNotFoundError>]",
+    "confidence": 0.3,
+    "method": "fallback_length"
+  },
+  "contradictions": "Contradiction detection unavailable (fallback mode)",
+  "scores": {
+    "gemini": {
+      "quality": 1.58,
+      "confidence": 0.3
+    },
+    "grok": {
+      "quality": 1.36,
+      "confidence": 0.3
+    },
+    "claude": {
+      "quality": 1.5,
+      "confidence": 0.3
+    },
+    "gpt": {
+      "quality": 1.48,
+      "confidence": 0.3
+    }
+  },
+  "costs": {
+    "gemini": 6.000000000000001e-05,
+    "grok": 6.000000000000001e-05,
+    "claude": 6.000000000000001e-05,
+    "gpt": 6.000000000000001e-05
+  }
+}

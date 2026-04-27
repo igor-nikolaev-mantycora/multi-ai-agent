@@ -1,0 +1,19 @@
+{
+  "query": "how to open can of worms",
+  "prompt_used": "Answer clearly and accurately.\n\nhow to open can of worms",
+  "answers": {
+    "gemini": "RetryError[<Future at 0x1ea5c0b9a30 state=finished raised ModuleNotFoundError>]",
+    "grok": "RetryError[<Future at 0x1ea5c3c7950 state=finished raised KeyError>]",
+    "claude": "RetryError[<Future at 0x1ea5c492150 state=finished raised BadRequestError>]",
+    "gpt": "RetryError[<Future at 0x1ea5c5f8d70 state=finished raised RateLimitError>]"
+  },
+  "consensus": "Consensus error: RetryError[<Future at 0x1ea5c4c8ae0 state=finished raised RateLimitError>]",
+  "contradictions": "Contradiction error: RetryError[<Future at 0x1ea5c5c1910 state=finished raised RateLimitError>]",
+  "scores": "Scoring error: RetryError[<Future at 0x1ea5c658190 state=finished raised RateLimitError>]",
+  "costs": {
+    "gemini": 6.000000000000001e-05,
+    "grok": 6.000000000000001e-05,
+    "claude": 6.000000000000001e-05,
+    "gpt": 6.000000000000001e-05
+  }
+}

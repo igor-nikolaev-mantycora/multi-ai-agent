@@ -1,0 +1,19 @@
+{
+  "query": "how to",
+  "prompt_used": "Answer clearly and accurately.\n\nhow to",
+  "answers": {
+    "grok": "RetryError[<Future at 0x1ed62b40490 state=finished raised KeyError>]",
+    "gemini": "RetryError[<Future at 0x1ed62a9f150 state=finished raised NotFound>]",
+    "claude": "RetryError[<Future at 0x1ed62a9fc50 state=finished raised BadRequestError>]",
+    "gpt": "RetryError[<Future at 0x1ed62b37d40 state=finished raised RateLimitError>]"
+  },
+  "consensus": "Consensus error: RetryError[<Future at 0x1ed62b56340 state=finished raised RateLimitError>]",
+  "contradictions": "Contradiction error: RetryError[<Future at 0x1ed62b5ea40 state=finished raised RateLimitError>]",
+  "scores": "Scoring error: RetryError[<Future at 0x1ed62b72210 state=finished raised RateLimitError>]",
+  "costs": {
+    "grok": 6.000000000000001e-05,
+    "gemini": 6.000000000000001e-05,
+    "claude": 6.000000000000001e-05,
+    "gpt": 6.000000000000001e-05
+  }
+}
